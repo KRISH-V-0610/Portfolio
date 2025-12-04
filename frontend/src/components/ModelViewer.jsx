@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, Environment, useAnimations, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { Play, List, X } from 'lucide-react';
 
 const Model = ({ setAnimNames, selectedAnim, ...props }) => {
   const group = useRef();
@@ -75,7 +74,6 @@ const Model = ({ setAnimNames, selectedAnim, ...props }) => {
 const ModelViewer = ({ className }) => {
   const [animNames, setAnimNames] = useState([]);
   const [selectedAnim, setSelectedAnim] = useState(null);
-  const [showControls, setShowControls] = useState(false);
 
   return (
     <div className={`absolute inset-0 ${className}`}>
@@ -97,37 +95,7 @@ const ModelViewer = ({ className }) => {
         />
       </Canvas>
 
-      {/* Animation Controls UI */}
-      {/* <div className="absolute top-24 left-4 z-50">
-        <button
-          onClick={() => setShowControls(!showControls)}
-          className="bg-white/10 backdrop-blur-md border border-white/20 text-white p-3 rounded-full hover:bg-white/20 transition-all cursor-pointer"
-          title="Animation Controls"
-        >
-          {showControls ? <X size={20} /> : <List size={20} />}
-        </button>
 
-        {showControls && (
-          <div className="mt-4 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-4 w-64 max-h-[60vh] overflow-y-auto text-white">
-            <h3 className="text-sm font-bold mb-3 uppercase tracking-wider text-gray-400">Animations</h3>
-            <div className="flex flex-col gap-2">
-              {animNames.map((name) => (
-                <button
-                  key={name}
-                  onClick={() => setSelectedAnim(name)}
-                  className={`text-left text-sm p-2 rounded transition-colors flex items-center gap-2 cursor-pointer ${selectedAnim === name
-                      ? 'bg-white text-black font-bold'
-                      : 'hover:bg-white/10 text-gray-300'
-                    }`}
-                >
-                  <Play size={12} className={selectedAnim === name ? 'fill-current' : ''} />
-                  <span className="truncate">{name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div> */}
     </div>
   );
 };
