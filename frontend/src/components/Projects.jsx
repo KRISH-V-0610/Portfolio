@@ -57,7 +57,7 @@ const Projects = () => {
   }, { scope: container });
 
   return (
-    <div ref={container} className="relative w-full min-h-screen py-20 px-4 md:px-10 overflow-hidden transition-colors duration-500">
+    <div id="projects" ref={container} className="relative w-full min-h-screen py-20 px-4 md:px-10 overflow-hidden transition-colors duration-500">
 
       {/* Header */}
       <div className="flex justify-center mb-20">

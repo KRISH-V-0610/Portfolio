@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, Environment, useAnimations, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -36,15 +36,18 @@ const Model = ({ setAnimNames, selectedAnim, ...props }) => {
   // Falling Entry Logic
   useFrame((state, delta) => {
     if (isFallingEntry && !selectedAnim && group.current) {
-      // Move down
-      group.current.position.y -= delta * 8; // Adjust speed here
+      // Lerp position (Drop) - High speed to zero
+      group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, targetY, delta * 2);
 
-      // Check if landed
-      if (group.current.position.y <= targetY) {
+      // Lerp rotation (Spin) - High speed to zero
+      // Target rotation is 0 (or whatever the default model orientation is)
+      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, 0, delta * 2);
+
+      // Check if close enough to target
+      if (Math.abs(group.current.position.y - targetY) < 0.01) {
         group.current.position.y = targetY;
+        group.current.rotation.y = 0;
         setIsFallingEntry(false);
-
-        // Just keep falling animation playing (hovering effect)
       }
     }
   });
@@ -63,8 +66,11 @@ const Model = ({ setAnimNames, selectedAnim, ...props }) => {
       fallAction.reset().play();
       fallAction.setLoop(THREE.LoopRepeat);
 
-      // Set initial position
-      if (group.current) group.current.position.y = startY;
+      // Set initial position and rotation
+      if (group.current) {
+        group.current.position.y = startY;
+        group.current.rotation.y = -Math.PI * 4; // Start with 2 full spins (reversed)
+      }
     }
   }, [actions, names, mixer, selectedAnim]);
 
@@ -81,9 +87,7 @@ const ModelViewer = ({ className }) => {
         <ambientLight intensity={1} />
         <directionalLight position={[10, 10, 5]} intensity={4} />
         <Environment preset="city" />
-        <Model
-          scale={2.2}
-          position={[0, -2.5, 0]}
+        <ResponsiveModel
           setAnimNames={setAnimNames}
           selectedAnim={selectedAnim}
         />
@@ -94,10 +98,18 @@ const ModelViewer = ({ className }) => {
           maxPolarAngle={Math.PI / 2}
         />
       </Canvas>
-
-
     </div>
   );
+};
+
+const ResponsiveModel = (props) => {
+  const { viewport } = useThree();
+  // Use window width for more reliable device detection
+  const isMobile = window.innerWidth < 768;
+  const scale = isMobile ? 1.5 : 2.2; // Slightly larger on mobile to fill space better
+  const position = isMobile ? [0, 0, 0] : [0, -2.5, 0]; // 0 is center
+
+  return <Model scale={scale} position={position} {...props} />;
 };
 
 export default ModelViewer;

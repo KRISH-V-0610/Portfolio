@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Projects from './components/Projects';
+import Home from './pages/Home';
+import ProjectsPage from './pages/ProjectsPage';
 
 function App() {
-  const [isDark, setIsDark] = useState(true);
-
+  // Force dark mode
   useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
+    document.documentElement.classList.add('dark');
+  }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-b from-zinc-50 to-zinc-300 dark:from-black dark:to-zinc-950 transition-colors duration-500 overflow-hidden">
-      <Navbar isDark={isDark} setIsDark={setIsDark} />
-      <Hero isDark={isDark} />
-      <Projects />
-    </div>
+    <BrowserRouter>
+      <div className="relative min-h-screen w-full bg-black transition-colors duration-500 overflow-hidden">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

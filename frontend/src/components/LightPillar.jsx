@@ -265,8 +265,11 @@ const LightPillar = ({
 
         // Color Cycling Logic
         if (cycleTopColor) {
-          colorCycleRef.current += colorCycleSpeed; // Use prop
-          const hue = (colorCycleRef.current % 1);
+          // 0.002 per frame at 60fps is approx 0.12 per second
+          // timeRef.current is already incremented by 0.016 * rotationSpeed (0.3) -> too slow?
+          // Let's use performance.now() for absolute sync
+          const t = performance.now() / 1000;
+          const hue = (t * 0.12) % 1;
           const color = new THREE.Color().setHSL(hue, 1.0, 0.5);
           materialRef.current.uniforms.uTopColor.value.copy(color);
         }
